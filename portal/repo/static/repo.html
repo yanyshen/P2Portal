@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Eclipse Plugin Repository Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap-responsive.css" rel="stylesheet"> 
+    
+	<link href="css/bootstrap-classic.css" rel="stylesheet">
+    <link href="css/charisma-app.css" rel="stylesheet">
+    	
+	<link rel="stylesheet" type="text/css" href="easyui/themes/bootstrap/easyui.css">
+    
+	<script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="fileupload/ajaxfileupload.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/repo.js"></script>
+	<script src="js/common.js"></script>
+    <script type="text/javascript">
+    var treeNode = parent.currentNode;
+    if(parent.currentNode == null)
+    {	
+    		parent.goHome();
+    }
+    
+    $(function(){
+			organizePath();
+			loadHistory();
+			loadRepoInfo();
+	
+			$('#mirrorUrl').combobox({
+				  onSelect:function(record){
+					   $.ajax({     
+						type: "GET",  
+						url:  "/repository/"+record.id+"/",  
+						cache: false,  
+						async:false,  
+						dataType :'json',
+						data:"",
+						success:function(data){ 
+							$('#mirrorUrl').combobox("setValue",data.update_site_url);
+					    } ,
+						error:function(data,status,e){
+						    $.messager.alert('Load Failed',jason2String(data),'error');
+
+						}
+					 });      					 
+					 
+				  }
+			});
+			
+			buildRepoMirrorURLForCombo($('#mirrorUrl'));  //in common.js
+			
+			$("#publishDlg").on('show', function(){
+				$("#archive").val(undefined);
+				$("#p-comment").val(undefined);
+			});
+			$("#mirrorDlg").on('show', function(){
+				$("#mirrorUrl").val(undefined);
+				$("#m-comment").val(undefined);
+			});
+			
+			$("#editDlg").on('show', function(){
+				$("#e-repoName").val($("#show-repoName").val());
+				$("#e-repoDescription").val($("#show-repoDescription").val());
+			});
+			
+			$("#publishSaveBtn").bind('click', doPublish);
+			$("#mirrorSaveBtn").bind('click', doMirror);
+			$("#editSaveBtn").bind('click', doSave);
+			$("#deleteBtn").bind('click', function(){
+				$.messager.confirm('Confirm', 
+				 		 'All of the resources under this repository will be deleted. And this operation can\'t be rollback. Are you sure to continue?', 
+						 function(r){
+						 	 if(r){
+								 doDelete();
+							 }
+						 }
+				 );
+			});
+			$("#categoryBtn").bind('click', function(){
+				parent.goCategoryConfigurePage();
+			});
+//			$("#refreshBtn").bind('click',doRefresh);
+			$("#rollbackBtn").bind('click', function(){
+				$.messager.confirm('Confirm Rollback', 'Do you confirm this operation?', function(r){
+			        	if (r){
+			        		doRollback();	
+			        	}
+			    	 });
+				});
+			$("#cleanupBtn").bind('click', function(){
+				$.messager.confirm('Confirm Clean up', 'This operation can not be rolled back. Do you confirm to continue?', function(r){
+			        if (r){
+			        	doCleanup();
+			        }
+				});
+			});
+			
+			$("#history").datagrid({
+				singleSelect: true,
+				onClickRow:showDetailedInfo
+			});
+			$("#detailedPane").bind('click',function(){
+                $("#detailedPane").hide();
+			 });
+        });
+    </script>
+  </head>
+
+  <body>
+  <div id="loading" style="display:none" ><img id="loadingImg" src="/static/fileupload/loading.gif" /></div>
+    <ul id="path" class="breadcrumb">
+        <li><a href="#" onClick="parent.goHome();">Home</a> <span class="divider">/</span></li>
+    </ul>
+	
+	<div class="row-fluid sortable">
+		<div class="span5">
+		<p>
+		<button id="publishBtn" class="btn btn-default" data-toggle="modal" data-target="#publishDlg" data-backdrop="static"><i class=" icon-arrow-up"></i> Publish</button>
+		<button id="mirrorBtn" class="btn btn-default" data-toggle="modal" data-target="#mirrorDlg" data-backdrop="static"><i class="icon-retweet"></i> Mirror</button>
+		<button id="editBtn" class="btn btn-default" data-toggle="modal" data-target="#editDlg" data-backdrop="static"><i class="icon-pencil"></i> Edit</button>
+		<button id="deleteBtn" class="btn btn-default" ><i class="icon-remove"></i> Delete</button>
+		<button id="categoryBtn" class="btn btn-default" ><i class="icon-cog"></i> Configure Category</button>
+		</p>
+			<div class="box">
+			<div class="box-header well" data-original-title>
+				<h2>Repository Information</h2>
+			</div>
+			<div class="box-content">
+				<form class="form-horizontal">
+                    <fieldset>
+					<div class="control-group">
+                        <label class="control-label">Name:</label>
+                        <div class="controls"><input type="text" id="show-repoName" readonly></input></div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Update Site URL: </label>
+                        <div class="controls"><a id="show-siteUrl"></a></div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" >Description: </label>
+                        <div class="controls">
+                            <textarea rows="3" id="show-repoDescription" readonly></textarea>
+                        </div>
+                    </div>
+					</fieldset>
+                </form>
+			</div>
+			</div>
+		</div>
+		<div class="span6">
+			<p>
+				<button class="btn btn-default" id="refreshBtn"><i class="icon-refresh"></i> Refresh</button>
+				<button class="btn btn-default" id="rollbackBtn"><i class="icon-chevron-left"></i> Rollback</button>
+				<button class="btn btn-default" id="cleanupBtn"><i class="icon-remove-circle"></i> Cleanup</button>
+			</p>
+			<div class="box" style="height:250px">
+				<div class="box-header well" data-original-title>
+					<h2>Operation History</h2>
+					<!-- <div class="box-icon">
+						<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+					</div> -->
+				</div>
+				<div class="box-content">
+					<table id="history" class="easyui-datagrid" height="210px">
+						<thead>
+						<tr>
+							<th data-options="field:'committer',width: 100">Committer</th>
+							<th data-options="field:'commit_time',width: 150">Commit Time</th>
+							<th data-options="field:'message',width:200">Comment</th>
+							<th data-options="field:'way',width:100">Operation</th>
+						</tr>
+						</thead>
+					</table>          
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="detailedPane" class="row-fluid sortable" style="display: none">
+		<div class="span11">
+			<div class="box" style="min-height: 200px">	
+				<div class="box-header well" data-original-title>
+					<h2>Detailed Information</h2>
+				</div>
+				<div class="box-content" id="detailedContent"></div>
+			</div>
+		</div>
+	</div>
+	<div class="modal hide fade" id="publishDlg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Publish</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="publishForm">
+                        <div class="control-group">
+                            <label class="control-label" for="archive">Archive: </label>
+                            <div class="controls">
+								<input type="file" id="archive" name="archive"></input>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="p-comment">Comment: </label>
+                            <div class="controls">
+                                <textarea id="p-comment" rows="3"></textarea>
+                            </div>
+                        </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="publishSaveBtn" class="btn btn-primary">Publish</button>
+		</div>
+	</div>
+	<div class="modal hide fade" id="mirrorDlg" >
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Mirror</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="mirrorForm">
+                <div class="control-group">
+                    <label class="control-label" for="mirrorUrl">Mirror URL: </label>
+                    <div class="controls">
+                        <input class="easyui-combobox"  type="text" id="mirrorUrl" maxlength="200" style=" width:220px;height:27px;border:1px solid black" valueField="id" 	textField="text" panelHeight="auto" name="mirrorURL"></input>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="m-comment">Comment: </label>
+                    <div class="controls">
+                        <textarea id="m-comment" rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="mirrorSaveBtn" class="btn btn-primary">Mirror</button>
+		</div>
+	</div>
+	<div class="modal hide fade" id="editDlg" >
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="editForm">
+                    <fieldset>
+					<div class="control-group">
+                        <label class="control-label" for="e-repoName">Name:</label>
+                        <div class="controls"><input type="text" id="e-repoName" readonly/></div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="e-repoDescription">Description: </label>
+                        <div class="controls">
+                            <textarea rows="3" id="e-repoDescription"></textarea>
+                        </div>
+                    </div>
+					</fieldset>
+                </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="editSaveBtn" class="btn btn-primary">Save Changes</button>
+		</div>
+	</div>
+    <!-- category dialog -->
+	<!-- <div class="modal hide fade" id="categoryDlg" style="width:700px;">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Edit Category</h3>
+		</div>
+		<div class="modal-body">
+            <div><a class="btn" href="#" >Add</a>
+                 <a class="btn" href="#" >Delete</a>
+            </div>
+            <div class="row-fluid">
+                <div class="span4">
+                    <select id="category" multiple style="width:200px;height: 300px">
+                        <option>com.p2portal.category1</option>
+                        <option>com.p2portal.category2</option>
+                    </select>
+                </div>
+                <div class="span8">
+                    <h5>Category Properties</h5>
+                    <form class="form-horizontal">
+                        <div class="control-group">
+							<label class="control-label" for="categoryId">ID*: </label>
+                            <div class="controls"><input type="text" id="categoryId" placeholder="category id" required="true" /></div>
+                        </div>
+                        <div class="control-group">
+							<label class="control-label" for="categoryName">Name*: </label>
+                            <div class="controls"><input type="text" id="categoryName" placeholder="category name" required="true" /></div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="categoryDescription">Description: </label>
+                            <div class="controls"><textarea id="categoryDescription" rows="3"></textarea></div>
+                        </div>                     
+                    </form>
+                </div>
+            </div>
+			
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="categorySaveBtn" class="btn btn-primary">Save changes</button>
+		</div> -->
+	</div>
+  </body>
+</html>

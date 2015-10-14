@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+  	<link href="css/bootstrap.css" rel="stylesheet"> 
+    <link href="css/bootstrap-responsive.css" rel="stylesheet"> 
+   
+    <link href="css/charisma-app.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="easyui/themes/bootstrap/easyui.css">
+    <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
+    <script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    
+    <script src="js/bootstrap.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+
+    /* GLOBAL STYLES
+    -------------------------------------------------- */
+    /* Padding below the footer and lighter body text */
+
+    body {
+      color: #5a5a5a;
+    }
+	td,div{	font-family:Arial, Helvetica, sans-serif;font-size:13px;}
+    /* CUSTOMIZE THE CAROUSEL
+    -------------------------------------------------- */
+
+    /* Carousel base class */
+    .carousel {
+      margin-bottom: 30px;
+    }
+
+    .carousel {
+      position: relative;
+      z-index: 9;
+    }
+
+    .carousel-control {
+      height: 80px;
+      margin-top: 0;
+      font-size: 120px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      background-color: transparent;
+      border: 0;
+      z-index: 10;
+    }
+
+    .carousel .item {
+      height: 230px;
+    }
+    .carousel .img {
+      float:right;
+      margin:0 15px;
+    }
+    .carousel p {
+      margin:15px;
+    }
+
+    .tabs-title {
+      font-size: 14px;
+    }
+
+    hr {
+      border-top: 2px solid #eeeeee;
+      border-bottom: 2px solid #ffffff;
+    }
+    
+  </style>
+  <script>
+    $(function (){
+		$('#myCarousel').carousel();
+		var length = (document.body.clientWidth -30)*0.95;
+		setAllOperation(length);
+		setMyOperation(length);
+    });
+  	function setAllOperation(length){
+  		$('#t_allOperation').datagrid({
+			width: length,
+			height: 270,
+			singleSelect:true,
+			fitColumns: true,
+			columns:[[
+				{field:'repo',title:'Repository',width:Math.round(length*0.2)},
+				{field:'commit_time',title:'Commit Time',width:Math.round(length*0.2)},
+				{field:'message',title:'Comment',width:Math.round(length*0.4)},
+				{field:'way',title:'Operation',width:Math.round(length*0.05)},
+				{field:'committer',title:'Committer',width:Math.round(length*0.05)}
+			]]
+		});
+  		// load all operation data
+		$.ajax({     
+			type: "GET",  
+			url:  "/operations/?limit=10",  
+			cache: false,  
+			async:false,  
+			dataType :'json',
+			data:"",
+			success:function(data){ 
+                $('#t_allOperation').datagrid('loadData',buildOperationJson(data,20));
+		   } 
+		 });
+  	}
+  	
+  	function setMyOperation(length){
+  		
+		$('#t_myOperation').datagrid({
+			width: length,
+			height: 270,
+			singleSelect:true,
+			fitColuns: true,
+			columns:[[
+				{field:'repo',title:'Repository',width:Math.round(length*0.2)},
+				{field:'commit_time',title:'Commit Time',width:Math.round(length*0.2)},
+				{field:'message',title:'Comment',width:Math.round(length*0.4)},
+				{field:'way',title:'Operation',width:Math.round(length*0.15)}
+
+			]]
+		});
+        // load my recent operations
+		   $.ajax({     
+			type: "GET",  
+			url:  "/operations/mine/?limit=10",  
+			cache: false,  
+			async:false,  
+			dataType :'json',
+			data:"",
+			success:function(data){ 
+                $('#t_myOperation').datagrid('loadData',buildOperationJson(data,20));
+
+		   } 
+		 });
+  	}
+  	
+  </script>
+  </head>
+
+  <body>
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="item active">
+          <h2>Welcome to Eclipse Plugin Repository Portal</h2>
+          <div class="row">
+            <div class="span1"></div>
+            <div class="span8" style="valign: center"><p>The Eclipse Plugin Repository Portal is a management system for Eclipse plugins. It provides a web interface for users to manage their plugins during development.Using this system, users don’t have to bother with manual operations, which are usually time consuming and error prone. The plugin repository management process will be more efficient, stable, and of high quality.Eclipse Plugin Repository portal aims to play a key role in its users plugins repository management process.
+
+
+            </p>
+            </div>
+            <div class="span3"><img src="img/img_slide_01.jpg" alt="An image that says Install X A M P P for wordpress." width="215" height="145" />
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <h2>What are the Benefits?</h2>
+          <div class="row">
+            <div class="span1"></div>
+            <hr /> 
+            <ul class="no-float">
+              <li>Saves Team Time</li>
+              <li>Beautiful Default Design</li>
+              <li>Powerful Features &amp; API</li>
+              <li>Diligent Support</li>
+            </ul> 
+            </div>
+            <div class="span3"><img src="img/img_slide_02.jpg" width="215" height="145" alt="A thumbnail image that says S R grunge photoshop brushes 6 high resolution grunge brushes by six revisions." /></div>
+          </div>
+
+        </div>
+        <div class="item">
+          <h2>How About Features?</h2>
+          <div class="row">
+            <div class="span1"></div>
+            <div class="span8"><p>Eclipse Plugin Repository Portal is packed with powerful features. Why waste time to manager your repositories manullay when you can use our fantasic GUI ?</p>
+            <hr /> 
+          <ul class="no-float">
+            <li>Publish/Mirror/Rollbak A Repository</li>
+            <li>Make A Composite Repository</li>
+            <li>Edit Category</li>
+            <li>Add A Folder</li>
+         </ul>   </div>
+            <div class="span3"><img src="img/img_slide_03.jpg" width="215" height="145" alt="A thumbnail image that says grunge extreme 15 free high resolution grunge textures six revisions." /></div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+    </div><!-- /.carousel -->
+    
+    <div class="easyui-tabs" data-options="plain:true">
+        <div title="All Operations" style="padding:10px; ">
+          <table id="t_allOperation"></table>          
+        </div>
+        <div title="My Operations" style="padding:10px;">
+        	<table id="t_myOperation"></table>
+        </div>
+    </div>
+    
+  </body>
+</html>

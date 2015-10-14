@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Eclipse Plugin Repository Portal</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+	
+    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/bootstrap/easyui.css ">
+	<link rel="stylesheet" type="text/css" href="/static/css/icon.css ">
+   
+    <script type="text/javascript" src="/static/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" src="/static/js/main.js"></script>
+    <style type="text/css">
+      body {
+	    width: 100%; 
+		height: 100%; 
+		min-width: 1350px; 
+		_width: expression((document.documentElement.clientWidth||document.body.clientWidth)<1350?"1350px":"");
+        padding-top: 60px;
+        padding-bottom: 5px;
+		
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+     @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+      .tree-title {
+        font-size: 15px;
+      }
+      .tree-node {
+        margin: 2px;
+      }
+	  .btn {
+		font-size: 15px;
+	  }
+	  
+	  .sidebar-nav{
+		min-height:0;
+		box-shadow: 0 0 10px #BDBDBD;
+		-webkit-box-shadow: 0 0 10px #BDBDBD;
+		-moz-box-shadow: 0 0 10px #BDBDBD;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		margin-bottom: 0;
+		padding-bottom:0;
+	}
+	.sidebar-nav > ul > li:not(.nav-header){
+		margin-right:-2px;
+		margin-left:-2px;
+	}
+	.modal-backdrop {
+		background-position:static;
+	}
+    </style>
+
+    <script type="text/javascript">
+     $(function(){
+    	 checkUserIdentity();
+    	 $('#tt').tree({
+				onClick:function(node){
+					currentNode = node;
+					if(node.iconCls == "icon-site" || node.iconCls == "icon-folder"){
+						$("#workspace").attr("src", "/static/site.html");
+					}else if(node.iconCls == "icon-repo"){
+						$("#workspace").attr("src", "/static/repo.html");
+					}else if(node.iconCls == "icon-com-repo"){
+						$("#workspace").attr("src", "/static/com-repo.html");
+					}else{
+						$("#workspace").attr("src", "/static/home.html");
+					}
+				}
+			});
+		 loadDataForTree();
+		 $("#createSaveBtn").bind('click', createSite);
+		 $("#deleteSaveBtn").bind('click', function(arg){
+		 	 $.messager.confirm('Confirm', 
+			 		 'This operation can not rollback. Are you sure to delete this site?', 
+					 function(r){
+					 	 if(r){
+							 deleteSite();
+						 }
+					 }
+			 );
+		 });
+		 $("#syncSaveBtn").bind('click', syncSites);
+		 $("#recoverSaveBtn").bind('click', recoverSite);
+		 $("#deleteSDlg").on('show', function(){
+			 var sites = getAllSites();
+			 if($.isEmptyObject(sites) || sites.length == 0){
+				 $.messager.alert("Information", "No site in Eclipse Plugin Repository Portal.", "info");
+				 $("#deleteSDlg").modal("hide");
+				 return;
+			 }
+			 $("#deleteSel").empty();
+			 loadSites($("#deleteSel"),sites); 
+		 });
+		 $("#recoverSDlg").on('show', function(){
+			 var sites = getAllSites();
+			 if($.isEmptyObject(sites) || sites.length == 0){
+				 $.messager.alert("Information", "No site in Eclipse Plugin Repository Portal.", "info");
+				 $("#recoverSDlg").modal("hide");
+				 return ;
+			 }
+			 $("#recoverSel").empty();
+			 loadSites($("#recoverSel"), sites);
+		 });
+		 $("#syncSDlg").on('show', function(){
+			 var sites = getAllSites();
+			 if($.isEmptyObject(sites) || sites.length < 2){
+				 $.messager.alert("Information", "The number of sites in Eclipse Plugin Repository Portal is less than 2. Synchronize can't execute.", "info");
+				 $("#syncSDlg").modal("hide");
+				 return;
+			 }
+			 $("#sourceSel").empty();
+			 loadSites($("#sourceSel"), sites); 
+			 $("#destSel").empty();
+			 loadSites($("#destSel"), sites);
+			 $("#destSel").eq(1).attr('selected', 'true');
+		 });
+		 //when dialog is close, clear the data in form;
+		 $("#createSDlg").on('show', function(){
+			 $("#c-siteName").val(undefined);
+			 $("#c-hide").prop('checked',false);
+		 });
+    });
+     function showLoading(){
+ 		var div_body = $('#loading');
+ 		var height = document.body.scrollHeight;
+ 		var width = document.body.scrollWidth;
+ 		div_body.css("position", "absolute");
+ 		div_body.css("height", height + "px");
+ 		div_body.css("width", width + "px");
+ 		div_body.css("top", 0);
+ 		div_body.css("left", "absolute");	
+ 		div_body.css("backgroundColor", "#e8e8e8");	
+ 		div_body.css("opacity", "0.8");
+ 		$('#loadingImg').css("position", "absolute");
+ 		$('#loadingImg').css("top",height/2 + "px");
+ 		$('#loadingImg').css("left",width/2 + "px");
+ 		div_body.show();
+ 	}
+ 	function hideLoading(){
+ 		var div_body = $('#loading');
+ 		div_body.hide();
+ 	}
+    </script>
+
+  </head>
+
+  <body>
+<div id="loading" style="display:none" ><img id="loadingImg" src="/static/fileupload/loading.gif" /></div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Eclipse Plugin Repository Portal</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              Logged in as {{ user.username }}
+              <a href="#" onclick="logout()">[Logout]</a>
+            </p>
+            <ul class="nav">
+              <li class="active"><a href="javascript:goHome()">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2 main-menu-span">
+			<div class="well nav-collapse  sidebar-nav" style="min-height: 400px">
+				<ul id="tt"  animate="true"></ul>
+			</div><!--/.well -->
+			<div id="siteOperDiv" class="well nav-collapse  sidebar-nav" style="margin-top:10px; display:none">
+				<ul class="nav nav-tabs nav-stacked main-menu">
+				<li class="nav-header hidden-tablet"><i class="icon-user"></i> Site Operations for Admin</li>
+				<li style="margin-left: -2px;"><a data-toggle="modal" data-backdrop="static" class="ajax-link" href="#createSDlg"><i class="icon-plus-sign"></i><span class="hidden-tablet"> Create Site</span></a></li>
+				<li style="margin-left: -2px;"><a data-toggle="modal" data-backdrop="static" class="ajax-link" href="#deleteSDlg"><i class="icon-trash"></i><span class="hidden-tablet"> Delete Site</span></a></li>
+				<li style="margin-left: -2px;"><a data-toggle="modal" data-backdrop="static" class="ajax-link" href="#syncSDlg"><i class="icon-random"></i><span class="hidden-tablet"> Synchronize Site</span></a></li>
+				<li style="margin-left: -2px;"><a data-toggle="modal" data-backdrop="static" class="ajax-link" href="#recoverSDlg"><i class="icon-share"></i><span class="hidden-tablet"> Recover Site</span></a></li>
+				</ul>
+			</div>
+        </div><!--/span-->
+        <div class="span10">
+            <iframe id="workspace" src="/static/home.html" frameborder="no" width="100%" height="600px"></iframe>
+        </div><!--/span-->
+      </div><!--/row-->
+    </div>
+      <footer>
+		<hr style="margin: 5px, 0"/>
+	  <p align="center">&copy; Eclipse Plugin Repository Portal Team 2015</p>
+      </footer>
+    <!--/.fluid-container-->
+	
+	<!-- create site dialog -->
+	<div class="modal hide fade" id="createSDlg">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Create Site</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="createSForm">
+                <div class="control-group">
+                    <label class="control-label" for="c-siteName">Site Name: </label>
+                    <div class="controls"><input type="text" id="c-siteName" placeholder="Site Name" /></div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="c-hide">Hide: </label>
+                    <div class="controls"><input id="c-hide" type="checkbox" /></div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="createSaveBtn" class="btn btn-primary">Save</button>
+		</div>
+	</div>
+	
+	<!-- delete site dialog -->
+	<div class="modal hide fade" id="deleteSDlg">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Delete Site</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="deleteSForm">
+                <div class="control-group">
+                    <label class="control-label" for="deleteSel">Site: </label>
+                    <div class="controls"><select id="deleteSel">
+									<option> -------- </option>
+								  </select>
+					</div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="deleteSaveBtn" class="btn btn-primary">Delete</button>
+		</div>
+	</div>
+	<!-- synchronize site dialog -->
+	<div class="modal hide fade" id="syncSDlg">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Synchronize Sites</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="syncSForm">
+                <div class="control-group">
+                    <label class="control-label" for="sourceSel">Source Site: </label>
+                    <div class="controls"><select id="sourceSel">
+									<option> -------- </option>
+								  </select>
+					</div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="destSel">Destine Site: </label>
+                    <div class="controls"><select id="destSel">
+									<option> -------- </option>
+								  </select>
+					</div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="syncSaveBtn" class="btn btn-primary">Confirm</button>
+		</div>
+	</div>
+	
+	<!-- recover site dialog -->
+	<div class="modal hide fade" id="recoverSDlg">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Recover Site</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="recoverSForm">
+                <div class="control-group">
+                    <label class="control-label" for="recoverSel">Site: </label>
+                    <div class="controls"><select id="recoverSel">
+									<option> -------- </option>
+								  </select>
+					</div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="recoverSaveBtn" class="btn btn-primary">Confirm</button>
+		</div>
+	</div>
+	
+  </body>
+</html>

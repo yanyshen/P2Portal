@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Mini Eclipse
+Bundle-SymbolicName: com.p2portal.minieclipse;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: P2Portal

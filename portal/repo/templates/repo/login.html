@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sign in Eclipse Plugin Repository Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content=""> 
+
+     <link href="/static/css/bootstrap-responsive.css" rel="stylesheet"> 
+    <link href="/static/css/bootstrap-classic.css" rel="stylesheet">
+    <link href="/static/css/charisma-app.css" rel="stylesheet"> 
+    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/bootstrap/easyui.css">
+	<script type="text/javascript" src="/static/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+
+	<script type="text/javascript">
+	function submitForm(){
+		name = $("input[name='username']").val();
+		password = $("input[name='password']").val();
+		if(name == "" || password == ""){
+			$.messager.alert("Warning","Username or password can't be empty.","warning");
+			return ;
+		}
+		
+		$.ajax({
+			type: "POST",  
+			url:  "/login/portal/",
+			cache: false,  
+			async:false,  
+			dataType :'json',
+			data:"name="+name+"&password="+password,
+			success: function(data){
+				if(data.status == "Failed")
+					$.messager.alert("Error",data.info,"error");
+				else
+					document.location.href = data.url;
+			},
+			error:function(data,status,e){
+				$.messager.alert('Login Failed',data,'error');
+			}
+		});
+	}
+	</script>
+</head>
+
+  <body>
+    <div class="container-fluid" style="margin-top: 150px">
+		<div class="row-fluid">
+			<div class="row-fluid">
+				<div class="well span5 center login-box">
+					<h2>Welcome to Eclipse Plugin Repository Portal</h2>
+					<form id="ff" method="post" class="form-horizontal" style="margin-top:20px">
+						<fieldset>
+							<div class="input-prepend" title="Username" data-rel="tooltip">
+								<span class="add-on"><i class="icon-user"></i></span><input autofocus class="input-large span10" name="username" type="text" placeholder="user name" />
+							</div>
+							<div class="clearfix"></div>
+							<div class="input-prepend" title="Password" data-rel="tooltip">
+								<span class="add-on"><i class="icon-lock"></i></span><input class="input-large span10" name="password" type="password" placeholder="password" />
+							</div>
+							
+						</fieldset>
+					</form>
+					<p class="center span5">
+						<button type="submit" class="btn btn-primary" onclick="submitForm()">Login</button>
+					</p>
+				</div><!--/span-->
+			</div><!--/row-->
+		</div><!--/fluid-row-->
+		
+	</div><!--/.fluid-container-->
+
+  </body>
+</html>

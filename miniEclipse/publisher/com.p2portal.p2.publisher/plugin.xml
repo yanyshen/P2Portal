@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="PublisherProduct"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="com.p2portal.p2.publisher.scanner"
+            name="p2portal p2 Publisher">
+         <property
+               name="appName"
+               value="p2portal p2 Publisher">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="category"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="com.p2portal.p2.publisher.P2PortalCategoryPublisherApplication">
+         </run>
+      </application>
+   </extension>
+</plugin>

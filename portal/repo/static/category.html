@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+	<link href="css/bootstrap-responsive.css" rel="stylesheet"> 
+    
+	<link href="css/bootstrap-classic.css" rel="stylesheet">
+    <link href="css/charisma-app.css" rel="stylesheet">
+    	
+	<link rel="stylesheet" type="text/css" href="easyui/themes/bootstrap/easyui.css">
+    
+	<script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/category.js"></script>
+   	<style>
+   .new-add{
+		background:url('easyui/themes/icons/edit_add.png') no-repeat center center;
+	}
+	.datagrid-row-selected {
+		background: #ffffff;
+		color: #000000;
+	}	
+	td,div{	font-family:Arial, Helvetica, sans-serif;font-size:13px;}
+	</style>
+
+	<script type="text/javascript">
+	 var treeNode = parent.currentNode;
+    if(parent.currentNode == null)
+    {	
+    	parent.goHome();
+    } 
+	var toolbar = [{
+        text:'Add',
+        iconCls:'new-add',
+        handler:function(){
+        	showAddBox();
+        }
+    }];
+	$(function(){
+    	organizePath();
+    	loadCategory();
+    	loadFeature();
+    	//button bind
+    	$("#publishBtn").bind('click', publishCategory);
+    	$("#closeBtn").bind('click',function(){
+    		$("#detail").panel('close');
+    	});
+    	
+    	$("#confirmBtn").bind('click', save);
+    });
+	
+ 	</script>
+</head>
+<body>
+<div id="loading" style="display:none" ><img id="loadingImg" src="/static/fileupload/loading.gif" /></div>
+	<ul id="path" class="breadcrumb">
+        <li><a href="#" onClick="parent.goHome();">Home</a> <span class="divider">/</span></li>
+	</ul>
+    
+    <p> <button id="publishBtn" class="btn btn-primary btn-large">Publish Category</button></p>
+	<table id="t-category" class="easyui-datagrid" title="Category List" data-options="rownumbers:true, toolbar:toolbar" idField="ct-id">
+		<thead>
+		<tr>
+		<th data-options="field:'ct-id',width: 150">Category ID</th>
+		<th data-options="field:'ct-name',width: 150">Category Name</th>
+		<th data-options="field:'ct-desc',width:200">Description</th>
+		<th data-options="field:'operation', width:300">Operation</th>
+		</tr>
+		</thead>
+	</table>
+	<div id="detail" class="easyui-panel" closed="true" border="false" style="margin-top: 30px" data-options="onClose:clearDetailedBox">
+	<div class="box">
+		<div class="box-header well" data-original-title>
+			<h2>Category Detailed Information</h2>
+		</div>
+		<div class="box-content">
+			<div class="row-fluid">
+				<div class="span3">
+			<form >
+				<div class="control-group">
+					<label class="control-label" for="id">Category ID: </label>
+					<div class="controls">
+						<input type="text" id="id" placeholder="input an unique ID">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="name">Category Name: </label>
+					<div class="controls">
+						<input type="text" id="name" placeholder="showing text">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" >Description: </label>
+                    <div class="controls">
+                            <textarea rows="3" id="description" name="description"></textarea>
+                    </div>
+				</div>
+			</form>	
+			<p>
+						<button id="closeBtn" class="btn btn-default">Close</button>
+						<button id="confirmBtn" class="btn btn-primary">Confirm</button>
+						
+			</p>
+				</div>
+				<div class="span9">
+				<!-- show the features in repository --> 
+			<table id="tFeature" class="easyui-datagrid"
+				style="width: 780px; height:300px" title="Features"
+				rownumbers="true" remoteSort="false" idField="path"
+				onSortColumn="sortFeature(sort, order)">
+				<thead>
+					<tr>
+						<th field="path" hidden="true">Path</th>
+						<th field="status" checkbox="true"></th>
+						<th field="name" align="left" width="270px" sortable="true">Feature</th>
+						<th field="version" align="left" width="150px" sortable="true">Version</th>
+						<th field="commit_time" align="center" width="200" sortable="true">Commit
+							Time</th>
+						<th field="committer" align="left" width="80" sortable="true">Committer</th>
+					</tr>
+				</thead>
+			</table>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+  
+</body>
+</html>

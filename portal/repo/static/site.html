@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Eclipse Plugin Repository Portal - Site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap-responsive.css" rel="stylesheet"> 
+	<link href="css/bootstrap-classic.css" rel="stylesheet">
+    <link href="css/charisma-app.css" rel="stylesheet">
+	<link href="css/icon.css" rel="stylesheet">	
+    <link href="easyui/themes/bootstrap/easyui.css" rel="stylesheet">
+    <script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/site.js"></script>
+	<style>
+    .tabs-title {
+ 	   	font-size: 14px;
+    }
+	</style>  
+    <script type="text/javascript">
+    	var treeNode = parent.currentNode;
+
+    	if(parent.currentNode == null)
+    	{	
+    		parent.goHome();
+    	}
+    	
+    	$(function(){
+			organizePath();
+			$("#reNum").html(parent.getRepoNum(treeNode))
+			$("#comNum").html(parent.getCompositeNum(treeNode))
+						
+			$('#repoBtn').bind('click', function(event){ 
+				changePanelShow($('#addRepoBox'));
+				changeBtnShow($('#repoBtn'));
+			});
+			$('#comBtn').bind('click', function(event){ 
+				changePanelShow($('#addComBox'));
+				changeBtnShow($('#comBtn'));
+			});
+			
+			$("#repoSaveBtn").bind('click', addRepo);
+			$("#comSaveBtn").bind('click', addComposite);
+			
+			
+        });
+		function changePanelShow(panel){
+			$(".box").addClass("hide");
+			panel.removeClass("hide");
+		}
+		function changeBtnShow(btn){
+			$(".btn-primary").removeClass("btn-primary").addClass("btn-default");
+			btn.removeClass("btn-default").addClass("btn-primary");
+		}
+    </script>
+  </head>
+
+  <body>
+    <ul id="path" class="breadcrumb">
+        <li><a href="#" onClick="parent.goHome();">Home</a> <span class="divider">/</span></li>
+    </ul>
+    <div class="sortable row-fluid">
+		<a data-rel="tooltip" title="Repository" class="well span3 top-block" href="#">
+			<span class="icon32 icon-repo"></span>
+			<div>Repository Number</div>
+			<div id="reNum">0</div>
+			<span class="notification green">R</span>
+		</a>
+		<a data-rel="tooltip" title="Composite" class="well span3 top-block" href="#">
+			<span class="icon32 icon-com-repo"></span>
+			<div>Composite Number</div>
+			<div id="comNum">0</div>
+			<span class="notification">C</span> 
+		</a>
+	</div>
+	
+	<div class="easyui-tabs" data-options="plain:true" style="margin-top: 30px; width: 700px">
+        <div title="Add Repository" style="padding:10px; ">
+    			<div class="alert alert-info" >
+  					Add an empty repository to this site. You can publish plugins to it or mirror other repository later. 
+				</div>
+      			<form  class="form-horizontal" style="margin-top: 20px">
+				<fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="repoName">Name: </label>
+                    <div class="controls">
+                        <input type="text" id="repoName" placeholder="Name" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="description">Description: </label>
+                    <div class="controls">
+                        <textarea id="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="controls">
+                        <button id="repoSaveBtn" class="btn btn-primary" type="button">Save</button>
+                    </div>
+                </div>
+                </fieldset>
+                </form>
+    	</div>
+    	<div title="Add Composite" style="padding:10px">
+      			<div class="alert alert-info" >
+  					Add an empty composite repository to this site. 
+				</div>
+      			<form  class="form-horizontal"  style="margin-top: 20px">
+				<fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="comRepoName">Name: </label>
+                    <div class="controls">
+                        <input type="text" id="comRepoName" placeholder="Name" />
+                    </div>
+                </div>
+                <div style="margin-top: 40px"></div>
+                <div class="control-group">
+                    <label class="control-label"></label>
+                    <div class="controls">
+                        <button id="comSaveBtn" class="btn btn-primary" type="button">Save</button>
+                    </div>
+                </div>
+				</fieldset>
+            	</form>
+    	</div>
+  	</div>
+  </body>
+  </html>

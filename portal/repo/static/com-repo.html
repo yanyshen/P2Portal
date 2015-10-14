@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bootstrap, from Twitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap-responsive.css" rel="stylesheet"> 
+    
+	<link href="css/bootstrap-classic.css" rel="stylesheet">
+    <link href="css/charisma-app.css" rel="stylesheet">
+		
+    <link rel="stylesheet" type="text/css" href="easyui/themes/bootstrap/easyui.css">
+	
+    <script type="text/javascript" src="easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/site.js"></script>
+	<script src="js/comrepo.js"></script>
+	<style>
+		td,div{	font-family:Arial, Helvetica, sans-serif;font-size:13px;}
+	</style>
+    <!-- <script src="common.js"></script> -->
+    <script type="text/javascript">
+    var treeNode = parent.currentNode;
+    if(parent.currentNode == null)
+    {	
+    		parent.goHome();
+    }
+
+    $(function(){
+         organizePath();
+         loadRepos($("#show-repos"));
+     
+         buildRepoMirrorURLForCombo($('#mirrorUrl'));
+         
+         loadCompositeInfo();
+         		 
+         $("#addRepoDlg").on('hide',cleanRepoInfo);
+         $("#addComDlg").on('hide', cleanComInfo);
+         $("#repoSaveBtn").bind('click', addRepo);
+		 $("#comSaveBtn").bind('click', addComposite);
+		 
+		 $("#saveBtn").bind('click', saveCompositeInfo);
+		 $("#deleteBtn").bind('click', function(){
+			 var childrenNodes = parent.findNodeChildren(treeNode.id);
+			 if(childrenNodes.length != 0){
+				 $.messager.alert("Warning", "There are repositories under "+treeNode.text+". Please delete them before deleting.", "warn" );
+				 return;
+			 }
+			 $.messager.confirm('Confirm', 
+			 		 'This operation can\'t be rollback. Are you sure to continue?', 
+					 function(r){
+					 	 if(r){
+							 deleteComposite();
+						 }
+					 }
+			 ); 
+		 });
+		 
+    });
+
+    </script>
+  </head>
+
+  <body>
+    <ul id="path" class="breadcrumb">
+        <li><a href="#" onClick="parent.goHome();">Home</a> <span class="divider">/</span></li>
+    </ul>
+	<p>
+		<!-- <button class="btn btn-default"><i class="icon-retweet" data-toggle="modal" data-target="#mirrorDlg" data-backdrop="static"></i> Mirror</button> -->
+		<button class="btn btn-default" id="saveBtn"><i class="icon-ok"></i> Save</button>
+		<button class="btn btn-default" id="deleteBtn"><i class="icon-remove"></i> Delete</button>
+		
+		<button class="btn btn-default" data-toggle="modal" data-target="#addComDlg" data-backdrop="static"><i class="icon-plus-sign"></i>Add Composite</button>
+		<button class="btn btn-default" data-toggle="modal" data-target="#addRepoDlg" data-backdrop="static"><i class="icon-plus"></i>Add Repository</button>
+	</p>
+	<div class="box">
+		<div class="box-header well" data-original-title>
+			<h2>Composite Repository Information</h2>
+		</div>
+		<div class="box-content">
+			<div >
+				<label style="float:left;padding-top:5px;text-align:left;width:90px">Name:</label>
+				<input type="text" id="show-comName"></input>
+			</div>
+			<div>
+				<label style="float:left;padding-top:5px;text-align:left;width:90px">Update Sites:</label>
+				<a id="show-compoUpdateSite" ></a>
+			</div>  
+			<div  class="alert alert-info" id="alertInfo" style="display: none">
+				
+			</div>
+			<div style="margin-top: 20px;">
+				<table id="show-repos" class="easyui-datagrid" title="Repositories" idField="id">
+							<thead>
+							<tr>
+							<th data-options="field:'id',checkbox:true"></th>
+							<th data-options="field: 'name', width: 100">Name</th>
+							<th data-options="field: 'site', width: 100">Site</th>
+							<th data-options="field: 'path', width: 200">Path</th>
+							<th data-options="field: 'update_site_url', width: 300">Update Site URL</th>
+							</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- mirror dialog start 
+	<div class="modal hide fade" id="mirrorDlg" >
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Mirror</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" id="mirrorForm">
+                <div class="control-group">
+                    <label class="control-label" for="m-mirrorUrl">Mirror URL: </label>
+                    <div class="controls">
+                        <input class="easyui-combobox"  type="text" id="mirrorUrl" maxlength="200" style=" width:220px;height:27px;border:1px solid black" valueField="id" 	textField="text" panelHeight="auto" name="mirrorURL"></input>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="m-comment">Comment: </label>
+                    <div class="controls">
+                        <textarea id="m-comment" rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="mirrorSaveBtn" class="btn btn-primary">Mirror</button>
+		</div>
+	</div>
+	 mirror dialog end -->
+	
+	<div class="modal hide fade" id="addRepoDlg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Create Repository</h3>
+		</div>
+		<div class="modal-body">
+			<form  class="form-horizontal">
+				<fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="repoName">Name: </label>
+                    <div class="controls">
+                        <input type="text" id="repoName" placeholder="Name" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="description">Description: </label>
+                    <div class="controls">
+                        <textarea id="description" rows="3"></textarea>
+                    </div>
+                </div>
+				</fieldset>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="repoSaveBtn" class="btn btn-primary">Save</button>
+		</div>
+	</div>
+	
+	<div class="modal hide fade" id="addComDlg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Create Composite Repository</h3>
+		</div>
+		<div class="modal-body" style="height:120px">
+			<form  class="form-horizontal" style="margin-top: 30px">
+				<fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="comRepoName">Name: </label>
+                    <div class="controls">
+                        <input type="text" id="comRepoName" placeholder="Name" />
+                    </div>
+                </div>
+				</fieldset>
+            </form>
+		</div>
+		<div class="modal-footer">
+			<button name="close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<button id="comSaveBtn" class="btn btn-primary">Save</button>
+		</div>
+	</div>
+  </body>
+</html>

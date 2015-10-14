@@ -1,0 +1,168 @@
+1. Get all tree nodes
+[GET] http://localhost:8000/nodes/
+[RETURN] node tree
+Sample: curl "http://localhost:8000/nodes/"
+
+2. Create a new node in the tree
+[POST] http://localhost:8000/nodes/
+[DATA] parent, text
+[RETURN] node
+Sample: curl -d "parent=1&text=hello" "http://localhost:8000/nodes/"
+
+3. Retrive a repository
+[GET] http://localhost:8000/repository/repo_id/
+[RETURN] repository
+Sample: curl "http://localhost:8000/repository/2/"
+
+4. Publish a repository
+[POST] http://localhost:8000/repository/repo_id/publish/
+[DATA] name, description, comment, archive(only comment and archive are required if repository already exists)
+[RETURN] operation
+Sample: http://localhost:8000/test/repository/2/publish/
+
+5. Mirror a repository
+[POST] http://localhost:8000/repository/repo_id/mirror/
+[DATA] name, description, comment, mirror_url (only comment is required if repository already exists)
+[RETURN] operation
+Sample: http://localhost:8000/test/repository/2/mirror/
+
+6. Delete a repository (as well as the node)
+[DELETE] http://localhost:8000/repository/repo_id/
+[RETURN] deleted repository
+Sample: curl -X DELETE "http://localhost:8000/repository/2/"
+Sample: http://localhost:8000/test/repository/2/publish/
+
+7. Rollback a repository
+[POST] http://localhost:8000/repository/repo_id/rollback/
+[RETURN] rollback operation
+sample: curl -d "" "http://localhost:8000/repository/2/rollback/"
+
+8. Retrieve operations of a repo(order by commit_time, and latest come first)
+[GET] http://localhost:8000/repository/repo_id/operations/
+[DATA] limit
+sample: curl "http://localhost:8000/repository/2/operations/?limit=10"
+
+9. Retrieve all operations(order by commit_time, and latest come first)
+[GET] http://localhost:8000/operations/
+[DATA] limit
+sample: curl -d "limit=10" "http://localhost:8000/operations/?limit=10"
+
+10. Retrieve my operation(order by commit_time, and latest come first)
+[GET] http://localhost:8000/operations/mine/
+[DATA] limit
+sample: curl -d "limit=10" "http://localhost:8000/operations/mine/?limit=10"
+
+11. Get category information for a site
+[GET] http://localhost:8000/site/site_id/category/
+sample curl "http://localhost:8000/site/1/category/"
+
+12. Save category information for a site
+[POST] http://localhost:8000/site/site_id/category/
+[DATA] category
+sample curl -d "category=content" "http://localhost:8000/site/1/category/"
+
+13. Delete a node if has no child
+Node here includes repo, composite or normal folder. Node of site are not allowed to be deleted.
+[DELETE] http://localhost:8000/node/node_id/
+Sample: curl -X DELETE "http://localhost:8000/node/2/"
+
+14. Update repo information
+[POST] http://localhost:8000/repository/repository_id/
+[DATA] name, description, mirror_url
+Sample: curl -d "name=xxx&description=xxx&mirror_url=xxx" "http://localhost:8000/repository/2/"
+
+15. View file changes in one operation (publish, mirror, system)
+[GET] http://localhost:8000/operation/operation_id/
+Sample: curl "http://localhost:8000/operation/3/"
+
+16. View all repositories
+[GET] http://localhost:8000/repositories/
+Sample: curl "http://localhost:8000/repositories/"
+
+17. Get all sub repository ids in a composite
+[GET] http://localhost:8000/composite/composite_id/ 
+Sample: curl "http://localhost:8000/composite/3/"
+Result: repo ids in the composite, such as [3, 5, 8]
+
+18. Save a composite with sub repository ids
+[DATA] repo ids with same param name 'repositories', such as repositories=[1, 4, 5]
+[POST] http://localhost:8000/composite/composite_id/ 
+Result: saved sub repos in the composite, such as [1, 4, 5]
+
+19. Delete a composite
+[DELETE] http://localhost:8000/composite/composite_id/ 
+Result: sub repos in deleted composite, such as [3, 5, 8]
+
+20. Synchronise a site to another
+[POST] http://localhost:8000/site/site_id/synchronise/
+[DATA] destination
+Sample curl -d "destination=31" "http://locahost:8000/site/1/synchronise/"
+API: http://localhost:8000/site/1/synchronise/
+Result: file change list if HTTP 200
+
+21. Recover a site to previous state
+[POST] http://localhost:8000/site/site_id/recover/
+Sample curl -d "" "http://locahost:8000/site/31/recover/"
+API: http://localhost:8000/site/1/synchronise/
+Result: file change list if HTTP 200
+
+22. Get all available update sites
+[GET] http://localhost:8000/update_sites/
+
+23. Get installable units in a update site
+[GET] http://localhost:8000/update_site/{id}/installable_units/
+
+24: Get all profiles
+[GET] http://localhost:8000/profiles/
+
+25. Create profile
+[POST] http://localhost:8000/profiles/
+[DATA] name, version, update_sites(id list), installable_units(id list)
+
+26. Get an existing profile
+[GET] http://localhost:8000/profile/{id}/
+
+27. Delete an existing profile
+[DELETE] http://localhost:8000/profile/{id}/
+
+28. Edit an existing profile
+[POST] http://localhost:8000/profile/{id}/
+[DATA] name, version, update_sites(id list), installable_units(id list)
+
+29. View xml content of a profile
+[GET] http://localhost:8000/profile/{id}/view/
+
+30. Download profile as xml file
+[GET] http://localhost:8000/profile/{id}/download/
+
+31. Create a site
+[POST] http://localhost:8000/sites/
+
+32. View a site
+[GET] http://localhost:8000/site/{id}/
+
+33. Delete a site
+[DELETE] http://localhost:8000/site/{id}/
+
+34. Mirror a composite
+[POST] http://localhost:8000/composite/{id}/mirror/
+
+35. Upload an installer
+[POST] http://localhost:8000/installer/upload/
+
+36. Get installer locations
+[GET] http://localhost:8000/installer/locations/
+
+Sample return value:
+
+a. node tree
+[{"id":1, "text":"QARepository", "type":"S", children:[{"id":2, "text":"hello", "type":"R", children:[{"id":3, "text":"sample", "type":"R"},{"id":4, "text":"quickbugs", "type":"R"}]}]}]
+
+b. node
+{"id":4, "text":"quickbugs", "type":"R"}
+
+c. repository
+{"id":3, "name":"Sample Repo", "site":"QA Repository", "path":"a/b", "description":"It\'s a sample", "mirror_url":"", "update_site_url":""}
+
+d. operation
+{"id":2 "type":"P", "message":"Created from publish", "committer":"admin", "commit_time":" 27 Sep 2011 11:00:09 CST", "repository_id":3}

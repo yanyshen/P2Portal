@@ -1,0 +1,13 @@
+######################## Sample Usages ########################
+[Publish]
+eclipse.exe -application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher -metadataRepository file:/F:\tmp\yari -artifactRepository file:/F:\tmp\yari -source /F:\tmp\yari -compress -publishArtifacts
+
+[Mirror]
+eclipse.exe -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:F:\tmp\yari -destination file:F:\tmp\yari.mirror
+eclipse.exe -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:F:\tmp\yari -destination file:F:\tmp\yari.mirror
+
+eclipse.exe -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source http://devtools/raptor/juno/3.x/ibm/gep/ -destination file:F:\tmp\gep.mirror
+eclipse.exe -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source http://devtools/raptor/juno/3.x/ibm/gep/ -destination file:F:\tmp\gep.mirror
+
+[Category]
+eclipse.exe -rcd file:/F:\tmp\repoCategory.properties

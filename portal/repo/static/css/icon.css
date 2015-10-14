@@ -1,0 +1,9 @@
+.icon-repo{
+	background:url('../img/repository.gif') no-repeat;
+}
+.icon-com-repo{
+	background:url('../img/composite.gif') no-repeat;
+}
+.icon-site{
+  background: url('../img/tree_icons.png') no-repeat -240px -18px;
+}
