@@ -1,8 +1,8 @@
-![eBay Open Source P2Portal](https://github.com/eBay/P2Portal/raw/master/images/logo.png)P2Portal
+![eBay Open Source Eclipse Plugin Repository Portal](https://github.com/eBay/P2Portal/raw/master/images/logo.png)Eclipse Plugin Repository Portal
 ==================
 ##Overview
 
-P2 Repository Portal is a repositories management system, which provides a web interface for the end users to manage Eclipse Plugins and provide update sites to end users. It helps developer, tester and end customer to quickly work togther. It has the following features:
+Eclipse Plugin Repository Portal is a repositories management system, which provides a web interface for the end users to manage Eclipse Plugins and provide update sites to end users. It helps developer, tester and end customer to quickly work togther. It has the following features:
 
   * Centralized Management
   
@@ -22,7 +22,7 @@ With this system, the user can do the following operation through the graphic us
 * Edit the information of an existing repository;
 * Add/delete a folder;
 ![operations](https://github.com/eBay/P2Portal/raw/master/images/operation.png)
-In this way, the end user can be free from manual operations which have been proven error prone and time consuming. P2 Repository portal will play a key role on making the process more efficient and stable with high quality.
+In this way, the end user can be free from manual operations which have been proven error prone and time consuming. Eclipse Plugin Repository Portal will play a key role on making the process more efficient and stable with high quality.
 
 
 ## Use Scenario
@@ -45,11 +45,11 @@ In this way, the end user can be free from manual operations which have been pro
 
 ##System Requirements
 
-P2 Portal runs on Windows(64bit) and Linux (64 Bit).
+Eclipse Plugin Repository Portal runs on Windows(64bit) and Linux (64 Bit).
 
 ##Installation Guide
 
-1．Build P2 Portal
+1．Build Eclipse Plugin Repository Portal
     
     For Linux:
 
@@ -108,7 +108,7 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
     
     b) extract and start Eclipse kepler                               
     
-    c) Git clone P2Portal repository 
+    c) Git clone Eclipse Plugin Repository Portal repository 
     
     d) Import features and plugins from miniEclipse folder via File->Import->Import existing projects                           
     # Export
@@ -169,7 +169,7 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
     a) Download eclipse  4.3.2 windows 64 from https://www.eclipse.org/downloads/packages/eclipse-standard-432/keplersr2   
     b) extract and start Eclipse kepler                               
     
-    c) Git clone P2Portal repository 
+    c) Git clone Eclipse Plugin Repository Portal repository 
     
     d) Import features and plugins from miniEclipse folder via File->Import->Import existing projects                           
     # Export
@@ -189,15 +189,15 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
     b)Run a configure script demo-pre-cfg.sh
        This file is under the folder of /P2Portal/demo/. Double click it and choose “Run in Terminal”.
        You will be asked to create a superuser. Choose Yes. Input username, email and password according to the tips.
-       The username and password will be used to log in the admin page. You can also use it to log in the P2 Portal.
-    c) Start a server for P2 Repository Portal
+       The username and password will be used to log in the admin page. You can also use it to log in the Eclipse Plugin Repository Portal.
+    c) Start a server for Eclipse Plugin Repository Portal
          cd /P2Portal/portal
          python manage.py runserver <port> like 8081
     d) Start a HTTP File Server
         cd /P2Portal/update-sites
         python -m SimpleHTTPServer
     e) Access the system
-       Access P2 Repository Portal by http://localhost:<port>/
+       Access Eclipse Plugin Repository Portal by http://localhost:<port>/
        Access admin by http://localhost:<port>/admin.
 
 3．Set up a production environment
@@ -227,7 +227,7 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
       location	Specify the path of the repository. It can be either an absolute path. Required
       
       update_sites Specify the url through with one can access the repository’s files in the way of HTTP File. Required
-      hide	Indicate whether a repository site can be seen in P2 Portal system or not. Not necessary.
+      hide	Indicate whether a repository site can be seen in Eclipse Plugin Repository Portal or not. Not necessary.
       
       SITE_PATH_ROOT	Specify the path that will contain the new created sites. If it’s a relative path, 
       the system will consider it as <install_path>/<SITE_PATH_ROOT>. Required and Unique.
@@ -241,11 +241,11 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
     b)Run product-pre-cfg.sh to make portal.conf take effect.
       You will be asked to create a superuser. Choose Yes. Input username, email and password according to the tips.  
       
-      The username and password will be used to log in the admin page. You can also use it to log in the P2 Portal.    
+      The username and password will be used to log in the admin page. You can also use it to log in the Eclipse Plugin Repository Portal.    
 
-	  By default, the target platform to run P2Portal is in windows. If you want to run it on other OS, you need to export MiniEclipse for other OS and modify the scripts "cp -a win32.win32.x86_64/eclipse/. ../miniEclipse" to replace "win32.win32.x86_64" to the one you export.
+	  By default, the target platform to run Eclipse Plugin Repository Portal is in windows. If you want to run it on other OS, you need to export MiniEclipse for other OS and modify the scripts "cp -a win32.win32.x86_64/eclipse/. ../miniEclipse" to replace "win32.win32.x86_64" to the one you export.
 	  
-    c)Start a server for P2 Portal.
+    c)Start a server for Eclipse Plugin Repository Portal.
       cd <install_path>/portal
       python manage.py runserver <port> like 8081
          
@@ -254,13 +254,13 @@ P2 Portal runs on Windows(64bit) and Linux (64 Bit).
       cd <your-update-sites>
       python -m SimpleHTTPServer
                  
-    e)Access P2 Repository Portal
-      Access P2 Portal by http://localhost:<port>/.
+    e)Access Eclipse Plugin Repository Portal
+      Access Eclipse Plugin Repository Portal by http://localhost:<port>/.
       Access admin by http://localhost:<port>/admin.
 
 ## More Documents 
 
-[Setup Developing Environment for P2 Portal](https://github.com/eBay/P2Portal/wiki/Setup-Developing-Environment-for-P2Portal)
+[Setup Developing Environment for Eclipse Plugin Repository Portal](https://github.com/eBay/P2Portal/wiki/Setup-Developing-Environment-for-P2Portal)
 
 [Use Cases ](https://github.com/eBay/P2Portal/wiki/Use-Cases)
 
