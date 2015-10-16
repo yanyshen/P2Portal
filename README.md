@@ -1,4 +1,4 @@
-![eBay Open Source Eclipse Plugin Repository Portal](https://github.com/eBay/P2Portal/raw/master/images/logo.png)Eclipse Plugin Repository Portal
+![eBay Open Source Eclipse Plugin Repository Portal]Eclipse Plugin Repository Portal
 ==================
 ##Overview
 
