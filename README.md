@@ -1,4 +1,4 @@
-![eBay Open Source Eclipse Plugin Repository Portal]Eclipse Plugin Repository Portal
+Eclipse Plugin Repository Portal
 ==================
 ##Overview
 
