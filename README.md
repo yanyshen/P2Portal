@@ -136,7 +136,7 @@ Eclipse Plugin Repository Portal runs on Windows(64bit) and Linux (64 Bit).
 
     # Setup workspace
     > cd C:
-    > git clone git@github.corp.ebay.com:P2Portal/P2Portal.git
+    > git clone git@github.com:eBay/P2Portal.git
     
     # Install Python libs
       Download Python2.7.5 Windows x86-64 from http://www.python.org/download/ and install. 
@@ -183,24 +183,7 @@ Eclipse Plugin Repository Portal runs on Windows(64bit) and Linux (64 Bit).
     a) Change folder name from eclipse to miniEclipse.                                                                            
     b) Copy miniEclipse folder C:/P2Portal.
      
- 2．Run a demo:
-
-    a) Change portal.conf field "location" to a absolute path.
-    b)Run a configure script demo-pre-cfg.sh
-       This file is under the folder of /P2Portal/demo/. Double click it and choose “Run in Terminal”.
-       You will be asked to create a superuser. Choose Yes. Input username, email and password according to the tips.
-       The username and password will be used to log in the admin page. You can also use it to log in the Eclipse Plugin Repository Portal.
-    c) Start a server for Eclipse Plugin Repository Portal
-         cd /P2Portal/portal
-         python manage.py runserver <port> like 8081
-    d) Start a HTTP File Server
-        cd /P2Portal/update-sites
-        python -m SimpleHTTPServer
-    e) Access the system
-       Access Eclipse Plugin Repository Portal by http://localhost:<port>/
-       Access admin by http://localhost:<port>/admin.
-
-3．Set up a production environment
+ 2．Set up a production environment
 
     a) Configure repository location and site root path in /P2Portal/product/portal.conf 
         The content in this file is as follows:
