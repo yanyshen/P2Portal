@@ -5,7 +5,7 @@
          id="Product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="com.p2portal.publisher.category"
+            application="com.p2portal.p2.publisher.category"
             name="Mini Eclipse">
          <property
                name="appName"

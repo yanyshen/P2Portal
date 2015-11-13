@@ -2,7 +2,7 @@ Eclipse Plugin Repository Portal
 ==================
 ##Overview
 
-Eclipse Plugin Repository Portal is a repositories management system, which provides a web interface for the end users to manage Eclipse Plugins and provide update sites to end users. It helps developer, tester and end customer to quickly work togther. It has the following features:
+Eclipse Plugin Repository Portal is a repositories management system, which provides a web interface for eclipse plugin developers/testers to manage Eclipse Plugins and provides update sites to end users. It helps developer, tester to quickly work togther. It has the following features:
 
   * Centralized Management
   
@@ -22,7 +22,7 @@ With this system, the user can do the following operation through the graphic us
 * Edit the information of an existing repository;
 * Add/delete a folder;
 ![operations](https://github.com/eBay/P2Portal/raw/master/images/operation.png)
-In this way, the end user can be free from manual operations which have been proven error prone and time consuming. Eclipse Plugin Repository Portal will play a key role on making the process more efficient and stable with high quality.
+In this way, plugin developers/testers can be free from manual operations which have been proven error prone and time consuming. Eclipse Plugin Repository Portal will play a key role on making the process more efficient and stable with high quality.
 
 
 ## Use Scenario
@@ -230,7 +230,7 @@ Eclipse Plugin Repository Portal runs on Windows(64bit) and Linux (64 Bit).
 	  
     c)Start a server for Eclipse Plugin Repository Portal.
       cd <install_path>/portal
-      python manage.py runserver <port> like 8081
+      python manage.py runserver 0.0.0.0:<port> like 8081
          
     d)Start a server for HTTP File Server.
       You can use the simple http server provided by python

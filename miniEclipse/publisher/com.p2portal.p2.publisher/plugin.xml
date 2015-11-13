@@ -5,11 +5,11 @@
          id="PublisherProduct"
          point="org.eclipse.core.runtime.products">
       <product
-            application="com.p2portal.p2.publisher.scanner"
-            name="p2portal p2 Publisher">
+            application="com.p2portal.p2.publisher.category"
+            name="Mini Eclipse">
          <property
                name="appName"
-               value="p2portal p2 Publisher">
+               value="Mini Eclipse">
          </property>
       </product>
    </extension>
@@ -21,7 +21,7 @@
             thread="main"
             visible="true">
          <run
-               class="com.p2portal.p2.publisher.P2PortalCategoryPublisherApplication">
+               class="com.p2portal.publisher.P2PortalCategoryPublisherApplication">
          </run>
       </application>
    </extension>
